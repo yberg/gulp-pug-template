@@ -1,0 +1,11 @@
+{
+  "devDependencies": {
+    "browser-sync": "*",
+    "gulp": "*",
+    "gulp-browserify": "*",
+    "gulp-if": "*",
+    "gulp-jade": "*",
+    "gulp-sass": "*",
+    "gulp-uglify": "*"
+  }
+}
