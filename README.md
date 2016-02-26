@@ -1,4 +1,4 @@
-## Template for Gulp/Jade/Sass project
+## Template for Gulp/Jade/Sass projects
 
 #### Install
 ```sh
