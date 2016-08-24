@@ -10,9 +10,3 @@ $ npm install
 $ gulp
 ```
 
-#### Uninstall (Windows PowerShell)
-```sh
-$ cd node_modules
-$ npm uninstall (Get-ChildItem).Name
-```
-
