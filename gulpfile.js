@@ -24,7 +24,6 @@ gulp.task('jade', () =>  {
 });
 
 gulp.task('js', () =>  {
-  console.log("hejsan");
   return gulp.src(['src/js/**/*.js', '!src/js/**/*.min.js'])
     .pipe(browserify({ debug: env === 'development' }))
     .on('error', printError)
