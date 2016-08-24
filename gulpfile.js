@@ -3,8 +3,8 @@ var gulp = require('gulp'),
   browserify = require('gulp-browserify'),
   uglify = require('gulp-uglify'),
   sass = require('gulp-sass'),
-
-  browserSync = require('browser-sync'),
+  livereload = require('gulp-livereload'),
+  nodemon = require('gulp-nodemon'),
   gulpif = require('gulp-if');
 
 var env = process.env.NODE_ENV || 'development';
@@ -15,31 +15,32 @@ function printError(error) {
   this.emit('end');
 }
 
-gulp.task('jade', function() {
-  return gulp.src('src/templates/index.jade')
+gulp.task('jade', () =>  {
+  return gulp.src('src/views/*.jade')
     .pipe(jade())
     .on('error', printError)
     .pipe(gulp.dest(outputDir))
-    .pipe(browserSync.reload({stream: true}));
+    .pipe(livereload())
 });
 
-gulp.task('js', function() {
+gulp.task('js', () =>  {
+  console.log("hejsan");
   return gulp.src(['src/js/**/*.js', '!src/js/**/*.min.js'])
     .pipe(browserify({ debug: env === 'development' }))
     .on('error', printError)
     .pipe(gulpif(env === 'production', uglify()))
     .on('error', printError)
     .pipe(gulp.dest(outputDir + '/js'))
-    .pipe(browserSync.reload({stream: true}))
+    .pipe(livereload())
 });
 
-gulp.task('js-min', function() {
+gulp.task('js-min', () =>  {
   return gulp.src('src/js/**/*.min.js')
     .pipe(gulp.dest(outputDir + '/js'))
-    .pipe(browserSync.reload({stream: true}))
+    .pipe(livereload())
 });
 
-gulp.task('sass', function() {
+gulp.task('sass', () =>  {
   var config = {};
   if (env === 'development') {
     config.sourceComments = 'map';
@@ -47,47 +48,58 @@ gulp.task('sass', function() {
   if (env === 'production') {
     config.outputStyle = 'compressed';
   }
-  return gulp.src('src/sass/main.scss')
+  return gulp.src(['src/sass/main.scss', 'src/sass/main.sass'])
     .pipe(sass(config))
     .on('error', printError)
     .pipe(gulp.dest(outputDir + '/css'))
-    .pipe(browserSync.reload({stream: true}));
+    .pipe(livereload())
 });
 
-gulp.task('css-min', function() {
+gulp.task('css-min', () =>  {
   return gulp.src('src/css/**/*.min.css')
     .pipe(gulp.dest(outputDir + '/css'))
-    .pipe(browserSync.reload({stream: true}));
+    .pipe(livereload())
 });
 
-gulp.task('favicon', function() {
+gulp.task('map', () =>  {
+  return gulp.src('src/css/**/*.map')
+    .pipe(gulp.dest(outputDir + '/css'))
+    .pipe(livereload())
+});
+
+gulp.task('favicon', () =>  {
   return gulp.src('src/favicon.ico')
     .pipe(gulp.dest(outputDir))
-    .pipe(browserSync.reload({stream: true}));
+    .pipe(livereload())
 });
 
-gulp.task('images', function() {
+gulp.task('images', () =>  {
   return gulp.src('src/images/**/*')
     .pipe(gulp.dest(outputDir + '/images'))
-    .pipe(browserSync.reload({stream: true}));
+    .pipe(livereload())
 });
 
-gulp.task('watch', function() {
-  gulp.watch('src/templates/**/*.jade', ['jade']);
+gulp.task('watch', () =>  {
+  gulp.watch('src/**/*.jade', ['jade']);
   gulp.watch('src/js/**/*.js', ['js', 'js-min']);
-  gulp.watch('src/sass/**/*.scss', ['sass']);
+  gulp.watch(['src/sass/**/*.scss', 'src/sass/**/*.sass'], ['sass']);
   gulp.watch('src/css/**/*.min.css', ['css-min']);
+  gulp.watch('src/css/**/*.map', ['map']);
   gulp.watch('src/favicon.ico' ['favicon']);
   gulp.watch('src/images/**/*', ['images']);
 });
 
-gulp.task('browser-sync', function() {
-  browserSync({
-    server: {
-        baseDir: outputDir
-    },
-    port: 3000
-  });
+gulp.task('default', ['js', 'js-min', 'jade', 'sass', 'css-min', 'map', 'favicon', 'images', 'watch'], () =>  {
+  // listen for changes
+  livereload.listen();
+  // configure nodemon
+  nodemon({
+    // the script to run the app
+    script: 'app.js',
+    ext: 'js'
+  }).on('restart', () => {
+    // when the app has restarted, run livereload.
+    gulp.src('app.js')
+      .pipe(livereload());
+  })
 });
-
-gulp.task('default', ['js', 'js-min', 'jade', 'sass', 'css-min', 'favicon', 'images', 'watch', 'browser-sync']);

@@ -2,11 +2,10 @@
 
 #### Install
 ```sh
-$ npm update --save-dev
+$ npm install
 ```
 
 #### Run
-
 ```sh
 $ gulp
 ```
@@ -14,6 +13,6 @@ $ gulp
 #### Uninstall (Windows PowerShell)
 ```sh
 $ cd node_modules
-$ npm uninstall (Get-ChildItem).Name 
+$ npm uninstall (Get-ChildItem).Name
 ```
 
