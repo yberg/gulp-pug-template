@@ -4,15 +4,17 @@ var path = require('path');
 
 var basedir = path.join(__dirname, 'builds/development');
 
+app.set('view engine', 'jade');
+app.set('views', __dirname + '/src/views');
+
 app.use('/css', express.static(basedir + '/css'));
 app.use('/js', express.static(basedir + '/js'));
 
 app.get('/', (req, res) => {
-  res.sendFile(basedir + '/index.html');
+  res.render('index', {
+    content: 'Content'
+  });
 });
-
-app.set('view engine', 'jade');
-app.set('views', __dirname + '/src/views');
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
