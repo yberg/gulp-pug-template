@@ -12,7 +12,7 @@ app.use('/js', express.static(basedir + '/js'));
 
 app.get('/', (req, res) => {
   res.render('index', {
-    content: 'Content'
+    content: 'Content',
   });
 });
 
@@ -51,7 +51,7 @@ app.use(function(err, req, res, next) {
 
 var port = Number(process.env.PORT || '3000');
 
-var server = app.listen(port, function () {
+var server = app.listen(port, function() {
 
   var host = server.address().address;
   var port = server.address().port;
