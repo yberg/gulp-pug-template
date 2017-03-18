@@ -6,6 +6,7 @@ var sass = require('gulp-sass');
 var livereload = require('gulp-livereload');
 var nodemon = require('gulp-nodemon');
 var gulpif = require('gulp-if');
+var clean = require('gulp-clean');
 
 var env = process.env.NODE_ENV || 'development';
 var outputDir = 'builds/development';
@@ -16,7 +17,7 @@ function printError(error) {
 }
 
 gulp.task('jade', () =>  {
-  return gulp.src('src/views/*.jade')
+  return gulp.src('src/views/**/[^_]*.jade')
     .pipe(jade())
     .on('error', printError)
     .pipe(gulp.dest(outputDir))
@@ -25,9 +26,7 @@ gulp.task('jade', () =>  {
 
 gulp.task('js', () =>  {
   return gulp.src(['src/js/**/*.js', '!src/js/**/*.min.js'])
-    .pipe(browserify({
-      debug: env === 'development'
-    }))
+    .pipe(browserify({ debug: env === 'development' }))
     .on('error', printError)
     .pipe(gulpif(env === 'production', uglify()))
     .on('error', printError)
@@ -43,21 +42,17 @@ gulp.task('js-min', () =>  {
 
 gulp.task('sass', () =>  {
   var config = {};
-  if (env === 'development') {
-    config.sourceComments = 'map';
-  }
-  if (env === 'production') {
-    config.outputStyle = 'compressed';
-  }
-  return gulp.src(['src/sass/main.scss', 'src/sass/main.sass'])
+  if (env === 'development') { config.sourceComments = 'map'; }
+  if (env === 'production')  { config.outputStyle = 'compressed'; }
+  return gulp.src(['src/sass/**/[^_]*.scss', 'src/sass/**/[^_]*.sass'])
     .pipe(sass(config))
     .on('error', printError)
     .pipe(gulp.dest(outputDir + '/css'))
     .pipe(livereload());
 });
 
-gulp.task('css-min', () =>  {
-  return gulp.src('src/css/**/*.min.css')
+gulp.task('css', () =>  {
+  return gulp.src('src/css/**/*')
     .pipe(gulp.dest(outputDir + '/css'))
     .pipe(livereload());
 });
@@ -80,17 +75,23 @@ gulp.task('images', () =>  {
     .pipe(livereload());
 });
 
+gulp.task('clean', () => {
+  return gulp.src('builds/development/*')
+    .pipe(clean());
+});
+
 gulp.task('watch', () =>  {
   gulp.watch('src/**/*.jade', ['jade']);
-  gulp.watch('src/js/**/*.js', ['js', 'js-min']);
+  gulp.watch(['src/js/**/*.js', '!src/js/**/*.min.js'], ['js']);
+  gulp.watch('src/js/**/*.min.js', ['js-min']);
   gulp.watch(['src/sass/**/*.scss', 'src/sass/**/*.sass'], ['sass']);
-  gulp.watch('src/css/**/*.min.css', ['css-min']);
+  gulp.watch('src/css/**/*', ['css']);
   gulp.watch('src/css/**/*.map', ['map']);
   gulp.watch('src/favicon.ico', ['favicon']);
   gulp.watch('src/images/**/*', ['images']);
 });
 
-gulp.task('default', ['js', 'js-min', 'jade', 'sass', 'css-min', 'map',
+gulp.task('default', ['jade', 'js', 'js-min', 'sass', 'css', 'map',
     'favicon', 'images', 'watch'], () =>  {
   // listen for changes
   livereload.listen();

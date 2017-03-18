@@ -9,11 +9,10 @@ app.set('views', __dirname + '/src/views');
 
 app.use('/css', express.static(basedir + '/css'));
 app.use('/js', express.static(basedir + '/js'));
+app.use('/favicon.ico', express.static(basedir + '/favicon.ico'));
 
 app.get('/', (req, res) => {
-  res.render('index', {
-    content: 'Content',
-  });
+  res.render('index');
 });
 
 // catch 404 and forward to error handler
@@ -31,9 +30,8 @@ if (app.get('env') === 'development') {
   app.use(function(err, req, res, next) {
     res.status(err.status || 500);
     res.render('error', {
-      message: err.message,
-      error: err,
-      status: err.status
+      status: err.status,
+      message: err.message
     });
   });
 }

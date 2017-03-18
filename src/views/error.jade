@@ -1,5 +1,10 @@
 extends ../templates/layout
 
-block content
-    h1 Error #{status}
-    code= message
+block append head
+  link(rel="stylesheet", href="/css/error.css")
+
+block body
+  .ui.inverted.vertical.masthead.segment.align-items-center
+    .ui.text.container.center.aligned
+      h1.ui.inverted.header #{status}: 
+        em #{message}

@@ -1,9 +1,12 @@
 doctype html
 html
   head
-    title Gulp/Jade template
-    link(rel="stylesheet", href="css/main.css")
+    block head
+      title Gulp/Jade template
+      link(rel="icon", href="/favicon.ico")
+      link(rel="stylesheet", href="/css/semantic.min.css")
+      link(rel="stylesheet", href="/css/main.css")
   body
-    block content
+    block body
 
     script(src="js/main.js")
