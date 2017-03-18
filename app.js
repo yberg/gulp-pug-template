@@ -4,7 +4,7 @@ var path = require('path');
 
 var basedir = path.join(__dirname, 'builds/development');
 
-app.set('view engine', 'jade');
+app.set('view engine', 'pug');
 app.set('views', __dirname + '/src/views');
 
 app.use('/css', express.static(basedir + '/css'));
